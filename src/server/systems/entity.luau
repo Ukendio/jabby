@@ -8,7 +8,7 @@ local types = require(script.Parent.Parent.Parent.modules.types)
 local public = require(script.Parent.Parent.public)
 local query_parser = require(script.Parent.Parent.query_parser)
 
-local entity_index_try_get_fast = jecs.entity_index_try_get_fast
+local entity_index_try_get = jecs.entity_index_try_get
 local IS_PAIR = jecs.IS_PAIR
 local pair = jecs.pair
 local pair_first = jecs.pair_first
@@ -16,14 +16,14 @@ local pair_second = jecs.pair_second
 local empty_table = {}
 
 local function get_all_components(world, entity): {}
-	local record = entity_index_try_get_fast(world.entity_index, entity)
+	local record = entity_index_try_get(world.entity_index, entity)
 
 	if not record then return empty_table end
 	local archetype = record.archetype
 	if not archetype then return empty_table end
 
 	local components = {}
-	for _, ty in archetype.types do 
+	for _, ty in archetype.types do
 		table.insert(components, ty)
 	end
 	return components
@@ -89,7 +89,7 @@ return function()
 	local validate_entity = queue(remotes.validate_entity_component)
 
 	local inspectors = {}
-	
+
 	return function()
 
 		for incoming, world_id, ctype_name in validate_entity:iter() do
@@ -100,7 +100,7 @@ return function()
 			if not world or world.class_name ~= "World" then continue end
 
 			local map_components = {}
-			for id, name in world.world:query(world.debug):iter() do
+			for id, name in world.world:query(jecs.Name):iter() do
 				map_components[name] = id
 			end
 
@@ -159,7 +159,7 @@ return function()
 			local entity = inspect_data.entity
 
 			local map_components = {}
-			for id, name in world:query(world_data.debug):iter() do
+			for id, name in world:query(jecs.Name):iter() do
 				map_components[name] = id
 			end
 
@@ -225,7 +225,7 @@ return function()
 			end
 
 			for _, component in components do
-				local name = convert_component(world, inspector_data.world.debug, component)
+				local name = convert_component(world, jecs.Name, component)
 				local is_tag = is_tag(component)
 
 				if is_tag then
@@ -247,7 +247,7 @@ return function()
 					if new_value == TAG then "tag"
 					--todo: figure out a better way to say that you are not allowed to store nil in a component
 					elseif new_value == BAD_VALUE then "nil (not allowed)"
-					else lon.output(new_value, false)
+					else lon.output(new_value, true)
 				)
 			end
 
@@ -262,7 +262,7 @@ return function()
 					nil
 				)
 			end
-			
+
 			table.clear(old_values)
 
 			inspector_data.new_values = old_values
