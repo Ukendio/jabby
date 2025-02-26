@@ -22,11 +22,7 @@ local function get_all_components(world, entity): {}
 	local archetype = record.archetype
 	if not archetype then return empty_table end
 
-	local components = {}
-	for _, ty in archetype.types do
-		table.insert(components, ty)
-	end
-	return components
+	return table.clone(archetype.types)
 end
 
 local function convert_component(world, debug, entity): string

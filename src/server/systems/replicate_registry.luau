@@ -23,8 +23,8 @@ type Connection = {
 	with: {jecs.Entity<any>},
 
 	new_columns: {{any}},
-	old_columns: {{any}},	
-	
+	old_columns: {{any}},
+
 	from: number,
 	upto: number
 
@@ -171,7 +171,7 @@ return function()
 		for incoming, query_id in disconnect_query:iter() do
 			processing_queries[query_id] = nil
 		end
-		
+
 		for incoming, world_id, query_id, query in request_query:iter() do
 			if not traffic_check.check_no_wl(incoming.host) then continue end
 
@@ -181,7 +181,7 @@ return function()
 			if not world or world.class_name ~= "World" then continue end
 
 			local ok = check_if_query_valid(world, query)
-			
+
 			if not ok then continue end
 
 			local result = query_parser(query)
@@ -267,23 +267,23 @@ return function()
 					outgoing = outgoing,
 					query_id = query_id,
 					frame = 0,
-	
+
 					world = world,
 
 					paused = false,
 					refresh = false,
-	
+
 					include = include,
 					exclude = exclude,
 					with = with,
-	
+
 					new_columns = new_columns,
 					old_columns = old_columns,
-	
+
 					from = 1,
 					upto = 25
 				}
-	
+
 				processing_queries[query_id] = connection
 			end
 		end
@@ -343,7 +343,7 @@ return function()
 
 			local from = query_data.from
 			local upto = query_data.upto
-			
+
 			local new_columns = query_data.new_columns
 			local old_columns = query_data.old_columns
 			-- set the names of each column
@@ -389,10 +389,8 @@ return function()
 			local row_entity = 1
 
 			for _, archetype: jecs.Archetype in archetypes do
-				for row = #archetype.entities, 1, -1 do
-					local entity = archetype.entities[row]
-					table.insert(entities, entity)
-				end
+				local archetype_entities = archetype.entities
+				table.move(archetype_entities, 1, #archetype_entities, #entities, entitie
 			end
 
 			table.sort(entities)
@@ -442,7 +440,7 @@ return function()
 								if #temp_b > 0 then
 									table.insert(temp_b, "; ")
 								end
-								
+
 								local str_of_v = if type(value) == "string" then `"{value}"` else tostring(value)
 								local str = `{key}: {str_of_v}`
 

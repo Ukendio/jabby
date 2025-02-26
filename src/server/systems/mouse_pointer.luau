@@ -57,10 +57,7 @@ local function get_all_components(world, entity): {}
 	local archetype = record.archetype
 	if not archetype then return empty_table end
 
-	local components = {}
-	for _, ty in archetype.types do 
-		table.insert(components, ty)
-	end
+	local components = table.clone(archetype.types)
 
 	table.sort(components, function(a, b)
 		return if is_tag(world, a) and is_tag(world, b) then a < b
@@ -128,7 +125,7 @@ local function obtain_string(entity: jecs.Entity<any>, world: jecs.World)
 				to_append = `<b>{name}</b>: {value}`
 			end
 		end
-		
+
 		if MAX_SIZE > n + #to_append then
 			n += #to_append
 			table.insert(strings, to_append)
@@ -159,7 +156,7 @@ return function()
 			if not world_data or world_data.class_name ~= "World" then continue end
 
 			local result = workspace:Raycast(pos, dir * 1000)
-			
+
 			if not result then
 				remotes.send_mouse_entity:fire(
 					outgoing,
@@ -190,7 +187,7 @@ return function()
 				entity, part = world_data.get_entity_from_part(part)
 			end
 
-			if not entity then 
+			if not entity then
 				remotes.send_mouse_entity:fire(
 					outgoing,
 					world_id
